@@ -1,148 +1,32 @@
-// =========================
-// Portfolio Version 2.0
-// =========================
+const $ = s => document.querySelector(s);
+const nav = $('.navbar'), links = $('.nav-links'), topBtn = $('#topBtn'), bar = $('#progressBar');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// Mobile Menu
-const menuBtn = document.querySelector(".menu-btn");
-const navLinks = document.querySelector(".nav-links");
-
-if (menuBtn) {
-    menuBtn.addEventListener("click", () => {
-        navLinks.classList.toggle("active");
-    });
-}
-
-// Navbar Scroll Effect
-const navbar = document.querySelector(".navbar");
-
-window.addEventListener("scroll", () => {
-
-    if (window.scrollY > 50) {
-        navbar.classList.add("scrolled");
-    } else {
-        navbar.classList.remove("scrolled");
-    }
-
+if (window.Typed) new Typed('.typing', {
+    strings: ['Web Designer', 'Front-End Developer', 'Freelancer'],
+    typeSpeed: 60, backSpeed: 35, backDelay: 1400, loop: true
 });
 
-// Scroll To Top Button
-const topBtn = document.getElementById("topBtn");
-
-window.addEventListener("scroll", () => {
-
-    if (window.scrollY > 300) {
-        topBtn.style.display = "block";
-    } else {
-        topBtn.style.display = "none";
-    }
-
+if (window.particlesJS && !reduce) particlesJS('particles-js', {
+    particles: {
+        number: { value: 45 }, color: { value: '#38bdf8' }, opacity: { value: .25 },
+        size: { value: 2 }, line_linked: { enable: true, color: '#8b5cf6', opacity: .15 },
+        move: { speed: 1 }
+    },
+    interactivity: { events: { onhover: { enable: false } } }
 });
 
-if (topBtn) {
+$('.menu-btn').addEventListener('click', () => links.classList.toggle('active'));
+links.addEventListener('click', e => { if (e.target.tagName === 'A') links.classList.remove('active'); });
 
-    topBtn.addEventListener("click", () => {
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    });
-
-}
-
-// Typing Animation
-const words = [
-    "Frontend Developer",
-    "Web Designer",
-    "UI Developer",
-    "Freelancer"
-];
-
-let wordIndex = 0;
-let charIndex = 0;
-let deleting = false;
-
-const typing = document.querySelector(".typing");
-
-function typeEffect() {
-
-    if (!typing) return;
-
-    const current = words[wordIndex];
-
-    if (!deleting) {
-
-        typing.textContent = current.substring(0, charIndex++);
-        if (charIndex > current.length) {
-            deleting = true;
-            setTimeout(typeEffect, 1500);
-            return;
-        }
-
-    } else {
-
-        typing.textContent = current.substring(0, charIndex--);
-
-        if (charIndex < 0) {
-            deleting = false;
-            wordIndex = (wordIndex + 1) % words.length;
-        }
-
-    }
-
-    setTimeout(typeEffect, deleting ? 60 : 120);
-
-}
-
-typeEffect();
-
-// Active Navigation
-const sections = document.querySelectorAll("section");
-const navItems = document.querySelectorAll(".nav-links a");
-
-window.addEventListener("scroll", () => {
-
-    let current = "";
-
-    sections.forEach(section => {
-
-        const top = section.offsetTop - 150;
-
-        if (scrollY >= top) {
-            current = section.getAttribute("id");
-        }
-
-    });
-
-    navItems.forEach(link => {
-
-        link.classList.remove("active");
-
-        if (link.getAttribute("href") === "#" + current) {
-            link.classList.add("active");
-        }
-
-    });
-
-});
-
-// Fade-in Animation
-const observer = new IntersectionObserver((entries) => {
-
-    entries.forEach(entry => {
-
-        if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-        }
-
-    });
-
-}, {
-    threshold: 0.15
-});
-
-document.querySelectorAll("section").forEach(section => {
-    section.classList.add("hidden");
-    observer.observe(section);
-});
+const secs = [...document.querySelectorAll('main section[id]')];
+addEventListener('scroll', () => {
+    const y = scrollY, h = document.documentElement.scrollHeight - innerHeight;
+    bar.style.width = (y / h * 100) + '%';
+    nav.classList.toggle('scrolled', y > 50);
+    topBtn.style.display = y > 400 ? 'block' : 'none';
+    const cur = secs.filter(s => s.offsetTop - 140 <= y).pop();
+    document.querySelectorAll('.nav-links a').forEach(a =>
+        a.classList.toggle('active', cur && a.getAttribute('href') === '#' + cur.id));
+}, { passive: true });
+topBtn.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
